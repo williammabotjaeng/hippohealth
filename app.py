@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from flask_mail import Message, Mail
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField
 from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
 from datetime import datetime
@@ -168,6 +168,15 @@ class PrescriptionForm(FlaskForm):
     date_prescribed = DateField('Date Prescribed', validators=[InputRequired()])
     prescribing_physician = StringField('Prescribing Physician', validators=[InputRequired(), Length(max=100)])
     submit = SubmitField('Save Prescription')
+
+class AppointmentForm(FlaskForm):
+    user_id = StringField('User ID', validators=[InputRequired()])
+    patient_id = StringField('Patient ID', validators=[InputRequired()])
+    appointment_date = DateTimeField('Appointment Date', validators=[InputRequired()])
+    appointment_type = StringField('Appointment Type', validators=[InputRequired(), Length(max=100)])
+    notes = StringField('Notes', validators=[Length(max=200)])
+    submit = SubmitField('Save Appointment')
+
 class ContactUsForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
