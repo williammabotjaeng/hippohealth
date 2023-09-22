@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from flask_mail import Message, Mail
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField
 from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
 from datetime import datetime
@@ -139,6 +139,26 @@ class UserForm(FlaskForm):
     phone_number = StringField('Phone Number')
     address = StringField('Address')
     submit = SubmitField('Save User')
+
+class PatientForm(FlaskForm):
+    first_name = StringField('First Name', validators=[InputRequired(), Length(max=100)])
+    last_name = StringField('Last Name', validators=[InputRequired(), Length(max=100)])
+    date_of_birth = DateField('Date of Birth', validators=[InputRequired()])
+    gender = SelectField('Gender', validators=[InputRequired()], choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+    social_security_number = StringField('Social Security Number', validators=[InputRequired(), Length(max=11)])
+    address = StringField('Address', validators=[InputRequired(), Length(max=200)])
+    phone_number = StringField('Phone Number', validators=[InputRequired(), Length(max=15)])
+    email = StringField('Email', validators=[InputRequired(), Length(max=100)])
+    emergency_contact_name = StringField('Emergency Contact Name', validators=[Length(max=100)])
+    emergency_contact_number = StringField('Emergency Contact Number', validators=[Length(max=15)])
+    insurance_provider = StringField('Insurance Provider', validators=[Length(max=100)])
+    insurance_policy_number = StringField('Insurance Policy Number', validators=[Length(max=50)])
+    primary_care_physician = StringField('Primary Care Physician', validators=[Length(max=100)])
+    allergies = StringField('Allergies', validators=[Length(max=200)])
+    medications = StringField('Medications', validators=[Length(max=200)])
+    medical_conditions = StringField('Medical Conditions', validators=[Length(max=200)])
+    surgeries = StringField('Surgeries', validators=[Length(max=200)])
+    submit = SubmitField('Save Patient')
 class ContactUsForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
