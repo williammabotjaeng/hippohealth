@@ -1,0 +1,15 @@
+.main-nav {
+    background-color: #50C878;
+}
+
+.bg-emerald {
+    background-color: #50C878 !important;
+}
+
+.white-text {
+    color: white;
+}
+
+.white-text:hover {
+    color: black;
+}
