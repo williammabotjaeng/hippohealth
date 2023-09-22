@@ -125,17 +125,20 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=4, max=100)])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=64)])
-
-class ContactForm(FlaskForm):
-    contact_type = SelectField('Contact Type',validators=[InputRequired()], choices=[('Customer', 'Customer'), ('Supplier', 'Supplier')])
+class UserForm(FlaskForm):
+    username = StringField('Username', validators=[InputRequired(), Length(min=2, max=20)])
+    password = StringField('Password', validators=[InputRequired(), Length(min=2, max=20)])
+    medical_practitioner_type = StringField('Medical Practitioner Type', validators=[Length(max=50)])
+    medical_authority = StringField('Medical Authority', validators=[Length(max=50)])
+    membership_status = StringField('Membership Status', validators=[Length(max=20)])
+    membership_number = StringField('Membership Number', validators=[Length(max=20)])
+    experience = StringField('Experience')
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=2, max=100)])
-    last_name = StringField('Last Name',  validators=[Length(min=2, max=100)])
+    last_name = StringField('Last Name', validators=[Length(min=2, max=100)])
     email = StringField('Email', validators=[InputRequired(), Length(min=6, max=100)])
     phone_number = StringField('Phone Number')
     address = StringField('Address')
-    status = StringField('Status')
-    ip_address = StringField('IP Address', validators=[InputRequired()])
-    submit = SubmitField('Create Contact')
+    submit = SubmitField('Save User')
 class ContactUsForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
