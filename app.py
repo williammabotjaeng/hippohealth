@@ -90,6 +90,17 @@ class Prescription(db.Model):
 
     patient = db.relationship('Patient', backref=db.backref('prescriptions', lazy=True))
 
+class Appointment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    appointment_date = db.Column(db.DateTime, nullable=False)
+    appointment_type = db.Column(db.String(100), nullable=False)
+    notes = db.Column(db.String(200), nullable=True)
+
+    user = db.relationship('User', backref=db.backref('appointments', lazy=True))
+    patient = db.relationship('Patient', backref=db.backref('appointments', lazy=True))
+
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
