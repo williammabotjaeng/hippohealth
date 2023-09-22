@@ -13,3 +13,19 @@
 .white-text:hover {
     color: black;
 }
+
+.main-footer {
+    bottom: 0px;
+    position: fixed;
+    width: 100%;
+    background-color: #50C878;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 10vh;
+    padding: 20px;
+}
+
+.main-content {
+    padding: 10px;
+}

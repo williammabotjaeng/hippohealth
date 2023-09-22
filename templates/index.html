@@ -1,51 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HippoHealth | Quality, Timely Health</title>
-  <link rel="shortcut icon" href="{{ url_for('static', filename='images/hippohealth-favicon.png') }}" type="image/png">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.min.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation-icons.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
-  <style>
-    /* Add any custom styles here */
-  </style>
-</head>
-<body>
-  <header>
-    <nav class="top-bar main-nav bg-emerald" data-topbar role="navigation">
-      <ul class="dropdown menu bg-emerald" data-dropdown-menu>
-        <li class="name">
-          <h1><a href="#" class="bg-emerald">
-            <img width="20%" src="{{ url_for('static', filename='images/hippohealth-logo.png') }}" alt="logo">
-        </a></h1>
-        </li>
-        <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
-      </ul>
-      <section class="top-bar-section">
-        <ul class="dropdown menu bg-emerald" data-dropdown-menu>
-          <li><a href="#" class="white-text">Home</a></li>
-          <li><a href="#" class="white-text">About</a></li>
-          <li><a href="#" class="white-text">Services</a></li>
-          <li><a href="#" class="white-text">Contact</a></li>
-        </ul>
-      </section>
-    </nav>
-  </header>
-
-  <main>
-    <!-- Add your content here -->
-  </main>
-
-  <footer>
-    <p>&copy; 2023 Your Company. All rights reserved.</p>
-  </footer>
-
-  <script src="{{ url_for('static', filename='js/vendor/jquery.js') }}"></script>
-<script src="{{ url_for('static', filename='js/vendor/foundation.min.js') }}"></script>
-  <script>
-    $(document).foundation();
-  </script>
-</body>
-</html>
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container main-content">
+    <p class="lead">
+        Introducing HippoHealth, the groundbreaking healthcare platform that puts your well-being first. With our state-of-the-art technology and user-friendly interface, we empower individuals to take control of their health like never before. From seamless appointment scheduling and personalized health insights to virtual consultations with top-notch medical professionals, HippoHealth revolutionizes the way you access and manage your healthcare. Say goodbye to long wait times and hello to convenience, efficiency, and quality care. Join HippoHealth today and experience a new era of personalized and accessible healthcare at your fingertips.
+    </p>
+</div>
+{% endblock %}
