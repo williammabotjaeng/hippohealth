@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Header and Footer Example</title>
+  <title>HippoHealth | Quality, Timely Health</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation-icons.css') }}">
   <style>
@@ -15,7 +15,9 @@
     <nav class="top-bar" data-topbar role="navigation">
       <ul class="title-area">
         <li class="name">
-          <h1><a href="#">Logo</a></h1>
+          <h1><a href="#">
+            <img src="{{ url_for('static', filename='images/hippohealth-logo.png') }}" alt="logo">
+        </a></h1>
         </li>
         <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
       </ul>
