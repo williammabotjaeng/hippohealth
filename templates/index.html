@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HippoHealth | Quality, Timely Health</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/hippohealth-favicon.png') }}" type="image/png">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation-icons.css') }}">
   <style>
@@ -13,16 +14,16 @@
 <body>
   <header>
     <nav class="top-bar" data-topbar role="navigation">
-      <ul class="title-area">
+      <ul class="dropdown menu" data-dropdown-menu>
         <li class="name">
           <h1><a href="#">
-            <img src="{{ url_for('static', filename='images/hippohealth-logo.png') }}" alt="logo">
+            <img width="20%" src="{{ url_for('static', filename='images/hippohealth-logo.png') }}" alt="logo">
         </a></h1>
         </li>
         <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
       </ul>
       <section class="top-bar-section">
-        <ul class="right">
+        <ul class="dropdown menu" data-dropdown-menu>
           <li><a href="#"><i class="fi-home"></i> Home</a></li>
           <li><a href="#"><i class="fi-info"></i> About</a></li>
           <li><a href="#"><i class="fi-compass"></i> Services</a></li>
@@ -40,8 +41,8 @@
     <p>&copy; 2023 Your Company. All rights reserved.</p>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.3/js/vendor/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.3/js/vendor/foundation.min.js"></script>
+  <script src="{{ url_for('static', filename='js/vendor/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vendor/foundation.min.js') }}"></script>
   <script>
     $(document).foundation();
   </script>
