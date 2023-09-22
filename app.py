@@ -159,6 +159,15 @@ class PatientForm(FlaskForm):
     medical_conditions = StringField('Medical Conditions', validators=[Length(max=200)])
     surgeries = StringField('Surgeries', validators=[Length(max=200)])
     submit = SubmitField('Save Patient')
+
+class PrescriptionForm(FlaskForm):
+    patient_id = StringField('Patient ID', validators=[InputRequired()])
+    medication = StringField('Medication', validators=[InputRequired(), Length(max=200)])
+    dosage = StringField('Dosage', validators=[InputRequired(), Length(max=50)])
+    instructions = StringField('Instructions', validators=[Length(max=200)])
+    date_prescribed = DateField('Date Prescribed', validators=[InputRequired()])
+    prescribing_physician = StringField('Prescribing Physician', validators=[InputRequired(), Length(max=100)])
+    submit = SubmitField('Save Prescription')
 class ContactUsForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
