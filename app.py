@@ -79,6 +79,17 @@ class Patient(db.Model):
 
     user = db.relationship('User', backref=db.backref('patients', lazy=True))
 
+class Prescription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    medication = db.Column(db.String(200), nullable=False)
+    dosage = db.Column(db.String(50), nullable=False)
+    instructions = db.Column(db.String(200), nullable=True)
+    date_prescribed = db.Column(db.Date, nullable=False)
+    prescribing_physician = db.Column(db.String(100), nullable=False)
+
+    patient = db.relationship('Patient', backref=db.backref('prescriptions', lazy=True))
+
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -192,97 +203,6 @@ def home():
     trusted_contacts = Contact.query.filter_by(user_id=current_user.id, status="Trusted").all()
     untrusted_contacts = Contact.query.filter_by(user_id=current_user.id, status="Untrusted").all()
     return render_template("home.html", current_user=current_user, form=form, contacts=contacts, trusted_contacts=trusted_contacts, untrusted_contacts=untrusted_contacts)
-
-@login_required
-@app.route("/compliance", methods=["GET"])
-def compliance():
-    contacts = Contact.query.filter_by(user_id=current_user.id).all()
-    return render_template("compliance.html", current_user=current_user, contacts=contacts)
-
-@login_required
-@app.route("/check/<int:contact_id>", methods=["POST"])
-def check(contact_id):
-    contact = Contact.query.get_or_404(contact_id)
-    # Perform verification process using the ip_address field
-    vpn_data = {
-        "ip": contact.ip_address,
-        "provider": "digitalelement"
-    }
-    headers = {
-        "Authorization": f"Bearer {api_token}",
-        "Content-Type": "application/json"
-    }
-    vpn_response = requests.post("https://ip-intel.aws.eu.pangea.cloud/v1/vpn", json=vpn_data, headers=headers)
-
-    proxy_data = {
-        "ip": contact.ip_address,
-        "provider": "digitalelement"
-    }
-    headers = {
-        "Authorization": f"Bearer {api_token}",
-        "Content-Type": "application/json"
-    }
-    proxy_response = requests.post("https://ip-intel.aws.eu.pangea.cloud/v1/proxy", json=proxy_data, headers=headers)
-
-    sanctions_data = {
-        "ip": contact.ip_address
-    }
-    headers = {
-        "Authorization": f"Bearer {api_token}",
-        "Content-Type": "application/json"
-    }
-    sanctions_response = requests.post("https://embargo.aws.eu.pangea.cloud/v1/ip/check", json=sanctions_data, headers=headers)
-
-    breached_data = {
-        "email": contact.email,
-        "provider": "spycloud"
-    }
-    headers = {
-        "Authorization": f"Bearer {api_token}",
-        "Content-Type": "application/json"
-    }
-    breached_response = requests.post("https://user-intel.aws.eu.pangea.cloud/v1/user/breached", json=breached_data, headers=headers)
-
-    
-    # Handle the response as needed
-    if sanctions_response.status_code == 200 and vpn_response.status_code == 200 and proxy_response.status_code == 200 and breached_response.status_code == 200:
-        contact.sanction_status = "Yes" if sanctions_response.json()['result']['count'] > 0 else "No"
-        contact.vpn_status = "Yes" if vpn_response.json()['result']['data']['is_vpn'] else "No"
-        contact.proxy_status = "Yes" if proxy_response.json()['result']['data']['is_proxy'] else "No"
-        contact.breached_status = "Yes" if breached_response.json()['result']['data']['found_in_breach'] else "No"
-
-        # Log the contact deletion event
-        log_data = {
-            "config_id": f"{log_config_id}",
-            'event': {
-                'message': 'Checking Contact Compliance'
-            }
-        }
-
-        headers = {
-            'Authorization': f"Bearer {api_token}",
-            'Content-Type': 'application/json'
-        }
-
-        response = requests.post('https://audit.aws.eu.pangea.cloud/v1/log', json=log_data, headers=headers)
-        res = response.json()
-
-        # Save the log data to the database
-        log = Log(
-            message=log_data['event']['message'],
-            actor=current_user.id,
-            action='check compliance',
-            target='Contact',
-            status='success',
-            request_time=res['request_time']
-        )
-
-        db.session.add(log)
-  
-
-        db.session.commit()
-
-    return redirect(url_for("compliance"))
 
 @app.route("/what")
 def what():
