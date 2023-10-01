@@ -226,9 +226,13 @@ class TierForm(FlaskForm):
     treatment_period = IntegerField('Treatment Period', default=7, validators=[DataRequired()])
     start_date = DateField('Start Date', validators=[DataRequired()])
     end_date = DateField('End Date', validators=[DataRequired()])
-    assigned_patient_id = IntegerField('Assigned Patient ID', validators=[DataRequired()])
+    assigned_patient_id = SelectField('Assigned Patient ID', validators=[InputRequired()], coerce=int)
     medical_practitioner_id = IntegerField('Medical Practitioner ID', validators=[DataRequired()])
     submit = SubmitField("Save Tier")
+
+    def __init__(self, *args, **kwargs):
+        super(TierForm, self).__init__(*args, **kwargs)
+        self.assigned_patient_id.choices = [(patient.id, patient.email) for patient in Patient.query.filter_by(user_id=current_user.id).all()]
 
 @app.route("/")
 def index():
@@ -442,6 +446,37 @@ def create_tier():
         return redirect(url_for('tiers'))
     return render_template('create_tier.html', form=form)
 
+@app.route('/edit_tier/<int:tier_id>', methods=['GET', 'POST'])
+@login_required
+def edit_tier(tier_id):
+    tier = Tier.query.get_or_404(tier_id)
+    form = TierForm(obj=tier)
+    if form.validate_on_submit():
+        tier.frequency = form.frequency.data
+        tier.treatment_period = form.treatment_period.data
+        tier.start_date = form.start_date.data
+        tier.end_date = form.end_date.data
+        tier.assigned_patient_id = form.assigned_patient_id.data
+        tier.medical_practitioner_id = form.medical_practitioner_id.data
+        db.session.commit()
+        flash('Tier updated successfully!', 'success')
+        return redirect(url_for('tiers'))
+    return render_template('edit_tier.html', form=form, tier_id=tier_id)
+
+@app.route('/delete_tier/<int:tier_id>', methods=['POST'])
+@login_required
+def delete_tier(tier_id):
+    tier = Tier.query.get_or_404(tier_id)
+    db.session.delete(tier)
+    db.session.commit()
+    flash('Tier deleted successfully!', 'success')
+    return redirect(url_for('tiers'))
+
+@app.route('/view_tier/<int:tier_id>', methods=['GET'])
+@login_required
+def view_tier(tier_id):
+    tier = Tier.query.get_or_404(tier_id)
+    return render_template('view_tier.html', tier=tier)
 
 @app.route('/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
 @login_required
