@@ -210,6 +210,12 @@ class PrescriptionForm(FlaskForm):
         # Populate the patient_email field with patient emails as labels
         # and pass the ID of the selected patient to the patient_id field
         self.patient_email.choices = [(patient.id, patient.email) for patient in Patient.query.filter_by(user_id=current_user.id).all()]
+
+@app.route('/prescription', methods=['GET', 'POST'])
+def prescription():
+    form = PrescriptionForm()
+    patients = Patient.query.filter_by(user_id=current_user.id).all()
+    return render_template('prescription.html', form=form, patients=patients)
 class AppointmentForm(FlaskForm):
     tier_id = SelectField('Tier ID', validators=[InputRequired()], coerce=int)
     patient_id = SelectField('Patient ID', validators=[InputRequired()], coerce=int)
