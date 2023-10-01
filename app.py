@@ -4,10 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from flask_mail import Message, Mail
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField, IntegerField, TimeField
 from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
 from datetime import datetime, date
+from sqlalchemy import Time, Date
 
 import moment
 import requests
@@ -98,9 +99,9 @@ class Appointment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
-    appointment_date = db.Column(db.DateTime, nullable=False)
+    appointment_date = db.Column(Date, nullable=False)
+    appointment_time = db.Column(Time, nullable=False)
     appointment_type = db.Column(db.String(100), nullable=False)
-    
     notes = db.Column(db.String(200), nullable=True)
 
     creator = db.relationship('User', backref=db.backref('appointments', lazy=True))
@@ -191,9 +192,9 @@ class PatientForm(FlaskForm):
     medical_conditions = StringField('Medical Conditions', validators=[Length(max=200)])
     surgeries = StringField('Surgeries', validators=[Length(max=200)])
     submit = SubmitField('Save Patient')
-
 class PrescriptionForm(FlaskForm):
-    patient_id = StringField('Patient ID', validators=[InputRequired()])
+    # Existing fields
+    patient_id = SelectField('Patient ID', validators=[InputRequired()])
     medication = StringField('Medication', validators=[InputRequired(), Length(max=200)])
     dosage = StringField('Dosage', validators=[InputRequired(), Length(max=50)])
     instructions = StringField('Instructions', validators=[Length(max=200)])
@@ -201,13 +202,33 @@ class PrescriptionForm(FlaskForm):
     prescribing_physician = StringField('Prescribing Physician', validators=[InputRequired(), Length(max=100)])
     submit = SubmitField('Save Prescription')
 
+    # New field
+    patient_email = SelectField('Patient Email', validators=[InputRequired()])
+
+    def __init__(self, *args, **kwargs):
+        super(PrescriptionForm, self).__init__(*args, **kwargs)
+        # Populate the patient_email field with patient emails as labels
+        # and pass the ID of the selected patient to the patient_id field
+        self.patient_email.choices = [(patient.id, patient.email) for patient in Patient.query.filter_by(user_id=current_user.id).all()]
+
+@app.route('/prescription', methods=['GET', 'POST'])
+def prescription():
+    form = PrescriptionForm()
+    patients = Patient.query.filter_by(user_id=current_user.id).all()
+    return render_template('prescription.html', form=form, patients=patients)
 class AppointmentForm(FlaskForm):
-    user_id = StringField('User ID', validators=[InputRequired()])
-    patient_id = StringField('Patient ID', validators=[InputRequired()])
-    appointment_date = DateTimeField('Appointment Date', validators=[InputRequired()])
+    tier_id = SelectField('Tier ID', validators=[InputRequired()], coerce=int)
+    patient_id = SelectField('Patient ID', validators=[InputRequired()], coerce=int)
+    appointment_date = DateField('Appointment Date', validators=[InputRequired()])
+    appointment_time = TimeField('Appointment Time', validators=[InputRequired()])
     appointment_type = StringField('Appointment Type', validators=[InputRequired(), Length(max=100)])
     notes = StringField('Notes', validators=[Length(max=200)])
     submit = SubmitField('Save Appointment')
+
+    def __init__(self, *args, **kwargs):
+        super(AppointmentForm, self).__init__(*args, **kwargs)
+        self.tier_id.choices = [(tier.id, tier.id) for tier in Tier.query.filter_by(medical_practitioner_id=current_user.id).all()]
+        self.patient_id.choices = [(patient.id, patient.id) for patient in Patient.query.filter_by(user_id=current_user.id).all()]
 
 class ContactUsForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
@@ -220,9 +241,13 @@ class TierForm(FlaskForm):
     treatment_period = IntegerField('Treatment Period', default=7, validators=[DataRequired()])
     start_date = DateField('Start Date', validators=[DataRequired()])
     end_date = DateField('End Date', validators=[DataRequired()])
-    assigned_patient_id = IntegerField('Assigned Patient ID', validators=[DataRequired()])
+    assigned_patient_id = SelectField('Assigned Patient ID', validators=[InputRequired()], coerce=int)
     medical_practitioner_id = IntegerField('Medical Practitioner ID', validators=[DataRequired()])
     submit = SubmitField("Save Tier")
+
+    def __init__(self, *args, **kwargs):
+        super(TierForm, self).__init__(*args, **kwargs)
+        self.assigned_patient_id.choices = [(patient.id, patient.email) for patient in Patient.query.filter_by(user_id=current_user.id).all()]
 
 @app.route("/")
 def index():
@@ -383,6 +408,7 @@ def create_patient():
 @login_required
 def create_appointment():
     form = AppointmentForm()
+    patients = Patient.query.filter_by(user_id=current_user.id).all()
     if form.validate_on_submit():
         appointment = Appointment(
             user_id=form.user_id.data,
@@ -395,7 +421,7 @@ def create_appointment():
         db.session.commit()
         flash('Appointment saved successfully!', 'success')
         return redirect(url_for('appointments'))
-    return render_template('create_appointment.html', form=form)
+    return render_template('create_appointment.html', form=form, patients=patients)
 
 @app.route('/create_prescription', methods=['GET', 'POST'])
 @login_required
@@ -435,6 +461,37 @@ def create_tier():
         return redirect(url_for('tiers'))
     return render_template('create_tier.html', form=form)
 
+@app.route('/edit_tier/<int:tier_id>', methods=['GET', 'POST'])
+@login_required
+def edit_tier(tier_id):
+    tier = Tier.query.get_or_404(tier_id)
+    form = TierForm(obj=tier)
+    if form.validate_on_submit():
+        tier.frequency = form.frequency.data
+        tier.treatment_period = form.treatment_period.data
+        tier.start_date = form.start_date.data
+        tier.end_date = form.end_date.data
+        tier.assigned_patient_id = form.assigned_patient_id.data
+        tier.medical_practitioner_id = form.medical_practitioner_id.data
+        db.session.commit()
+        flash('Tier updated successfully!', 'success')
+        return redirect(url_for('tiers'))
+    return render_template('edit_tier.html', form=form, tier_id=tier_id)
+
+@app.route('/delete_tier/<int:tier_id>', methods=['POST'])
+@login_required
+def delete_tier(tier_id):
+    tier = Tier.query.get_or_404(tier_id)
+    db.session.delete(tier)
+    db.session.commit()
+    flash('Tier deleted successfully!', 'success')
+    return redirect(url_for('tiers'))
+
+@app.route('/view_tier/<int:tier_id>', methods=['GET'])
+@login_required
+def view_tier(tier_id):
+    tier = Tier.query.get_or_404(tier_id)
+    return render_template('view_tier.html', tier=tier)
 
 @app.route('/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
 @login_required
