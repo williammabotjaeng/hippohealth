@@ -99,3 +99,28 @@
     align-items: end;
     
 }
+
+.contact-main-content {
+    display: flex;
+    align-items: center;
+    padding: 40px;
+    justify-content: center;
+    text-align: center;
+}
+
+.contact-right-form {
+    width: 50%;
+    float: right;
+}
+
+.contact-left-cta {
+    width: 50%;
+    float: left;
+    background-size: cover;
+    padding: 10px;
+}
+
+.tall-textarea {
+    height: 100px;
+    padding: 4px;
+}
