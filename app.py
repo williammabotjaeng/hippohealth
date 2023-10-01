@@ -250,11 +250,7 @@ def register():
 @login_required
 @app.route("/home")
 def home():
-    form = ContactForm()
-    contacts = Contact.query.filter_by(user_id=current_user.id).all()
-    trusted_contacts = Contact.query.filter_by(user_id=current_user.id, status="Trusted").all()
-    untrusted_contacts = Contact.query.filter_by(user_id=current_user.id, status="Untrusted").all()
-    return render_template("home.html", current_user=current_user, form=form, contacts=contacts, trusted_contacts=trusted_contacts, untrusted_contacts=untrusted_contacts)
+    return render_template("home.html", current_user=current_user)
 
 @app.route("/what")
 def what():
@@ -275,7 +271,7 @@ def contact():
         msg = Message(
             subject="New Message from Contact Form",
             sender=app.config["MAIL_USERNAME"],
-            recipients=["topolockapp@gmail.com"],
+            recipients=["hippohealthapp@gmail.com"],
             body=f"Name: {name}\nEmail: {email}\nMessage: {message}"
         )
 
