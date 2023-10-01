@@ -4,10 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from flask_mail import Message, Mail
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField, IntegerField, TimeField
 from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
 from datetime import datetime, date
+from sqlalchemy import Time, Date
 
 import moment
 import requests
@@ -98,9 +99,9 @@ class Appointment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
-    appointment_date = db.Column(db.DateTime, nullable=False)
+    appointment_date = db.Column(Date, nullable=False)
+    appointment_time = db.Column(Time, nullable=False)
     appointment_type = db.Column(db.String(100), nullable=False)
-    
     notes = db.Column(db.String(200), nullable=True)
 
     creator = db.relationship('User', backref=db.backref('appointments', lazy=True))
@@ -200,14 +201,19 @@ class PrescriptionForm(FlaskForm):
     date_prescribed = DateField('Date Prescribed', validators=[InputRequired()])
     prescribing_physician = StringField('Prescribing Physician', validators=[InputRequired(), Length(max=100)])
     submit = SubmitField('Save Prescription')
-
 class AppointmentForm(FlaskForm):
-    user_id = StringField('User ID', validators=[InputRequired()])
-    patient_id = StringField('Patient ID', validators=[InputRequired()])
-    appointment_date = DateTimeField('Appointment Date', validators=[InputRequired()])
+    tier_id = SelectField('Tier ID', validators=[InputRequired()], coerce=int)
+    patient_id = SelectField('Patient ID', validators=[InputRequired()], coerce=int)
+    appointment_date = DateField('Appointment Date', validators=[InputRequired()])
+    appointment_time = TimeField('Appointment Time', validators=[InputRequired()])
     appointment_type = StringField('Appointment Type', validators=[InputRequired(), Length(max=100)])
     notes = StringField('Notes', validators=[Length(max=200)])
     submit = SubmitField('Save Appointment')
+
+    def __init__(self, *args, **kwargs):
+        super(AppointmentForm, self).__init__(*args, **kwargs)
+        self.tier_id.choices = [(tier.id, tier.id) for tier in Tier.query.filter_by(medical_practitioner_id=current_user.id).all()]
+        self.patient_id.choices = [(patient.id, patient.id) for patient in Patient.query.filter_by(user_id=current_user.id).all()]
 
 class ContactUsForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
@@ -383,6 +389,7 @@ def create_patient():
 @login_required
 def create_appointment():
     form = AppointmentForm()
+    patients = Patient.query.filter_by(user_id=current_user.id).all()
     if form.validate_on_submit():
         appointment = Appointment(
             user_id=form.user_id.data,
@@ -395,7 +402,7 @@ def create_appointment():
         db.session.commit()
         flash('Appointment saved successfully!', 'success')
         return redirect(url_for('appointments'))
-    return render_template('create_appointment.html', form=form)
+    return render_template('create_appointment.html', form=form, patients=patients)
 
 @app.route('/create_prescription', methods=['GET', 'POST'])
 @login_required

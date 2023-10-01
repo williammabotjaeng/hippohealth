@@ -220,17 +220,26 @@
     width: 100%;
 }
 
-.left-patient-form {
+.appointment-form-contents {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.left-patient-form, .form-left-appointment {
     float: left;
     padding: 10px;
 }
 
+input.form-left-appointment {
+    width: 100%;
+}
 .left-settings-form {
     float: left;
     padding: 30px;
 }
 
-.right-patient-form {
+.right-patient-form, .form-right-appointment {
     float: right;
     padding: 10px;
 }

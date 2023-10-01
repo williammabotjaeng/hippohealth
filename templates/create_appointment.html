@@ -6,39 +6,55 @@
     <h4>Create an Appointment</h4>
     <a href="/appointments" class="button success">Back to Appointments</a>
   </div>
-  
+  <div class="form-area">
   <form method="POST" action="{{ url_for('create_appointment') }}">
     {{ form.hidden_tag() }}
     <div class="appointment-form-contents">
+      <div class="form-left-appointment">
       <div class="form-group">
         {{ form.patient_id.label }} {{ form.patient_id(class="form-control") }}
         {% for error in form.patient_id.errors %}
         <span class="text-danger">{{ error }}</span>
         {% endfor %}
       </div>
-      <!-- Add the other form fields here -->
+      <div class="form-group">
+        {{ form.tier_id.label }} {{ form.tier_id(class="form-control") }}
+        {% for error in form.tier_id.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
       <div class="form-group">
         {{ form.appointment_date.label }} {{ form.appointment_date(class="form-control") }}
         {% for error in form.appointment_date.errors %}
         <span class="text-danger">{{ error }}</span>
         {% endfor %}
       </div>
-      <div class="form-group">
-        {{ form.appointment_type.label }} {{ form.appointment_type(class="form-control") }}
-        {% for error in form.appointment_type.errors %}
-        <span class="text-danger">{{ error }}</span>
-        {% endfor %}
       </div>
-      <div class="form-group">
-        {{ form.notes.label }} {{ form.notes(class="form-control") }}
-        {% for error in form.notes.errors %}
-        <span class="text-danger">{{ error }}</span>
-        {% endfor %}
-      </div>
-      <div class="form-group">
-        {{ form.submit(class="button success appointment-submit-btn") }}
+      <div class="form-right-appointment">
+        <div class="form-group">
+          {{ form.appointment_time.label }} {{ form.appointment_time(class="form-control") }}
+          {% for error in form.appointment_time.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="form-group">
+          {{ form.appointment_type.label }} {{ form.appointment_type(class="form-control") }}
+          {% for error in form.appointment_type.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="form-group">
+          {{ form.notes.label }} {{ form.notes(class="form-control") }}
+          {% for error in form.notes.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
       </div>
     </div>
+    <div class="form-group">
+      {{ form.submit(class="button success appointment-submit-btn") }}
+    </div>
   </form>
+</div>
 </div>
 {% endblock %}
