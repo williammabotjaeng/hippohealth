@@ -247,8 +247,8 @@ def register():
             return redirect(url_for('home'))
     return render_template("register.html", form=form)
 
-@login_required
 @app.route("/home")
+@login_required
 def home():
     return render_template("home.html", current_user=current_user)
 
