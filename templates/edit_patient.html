@@ -1,39 +1,141 @@
 {% extends 'layout.html' %}
+
 {% block content %}
-<div class="container main-content">
-    <div class="left-home">
-        <p class="lead">
-            Introducing <strong>HippoHealth</strong>, the groundbreaking healthcare platform that puts your well-being first. With our state-of-the-art technology and user-friendly interface, we empower individuals to take control of their health like never before. From seamless appointment scheduling and personalized health insights to virtual consultations with top-notch medical professionals, HippoHealth revolutionizes the way you access and manage your healthcare. Say goodbye to long wait times and hello to convenience, efficiency, and quality care. <strong>Join HippoHealth</strong> today and experience a new era of personalized and accessible healthcare at your fingertips.
-        </p>
+  <div class="patient-container">
+    <div class="top-nav-edit-patient">
+      <h4>Edit Patient</h4>
+      <a class="button success back-from-edit-patient-btn" href="{{ url_for('patients')}}">Back to Patients</a>
     </div>
-    <div class="right-home">
-        <div class="row">
-            <div class="column medium-6">
-              <h3 class="h3 lead">Get Started</h3>
-              <form class="registration-form" method="POST" action="{{ url_for('register') }}">
-                {{ form.hidden_tag() }}
-                <div>
-                    <label for="username">Username</label>
-                </div>
-                <div class="input-group">
-                  {{ form.username(class="input-field", placeholder="Enter your username") }}
-                  {% for error in form.username.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                </div>
-                <div class="input-group">
-                  {{ form.password(class="input-field", placeholder="Enter your password") }}
-                  {% for error in form.password.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <button type="submit" class="button success">Register</button>
-              </form>
-            </div>
+    <form method="POST" action="{{ url_for('edit_patient', patient_id=patient.id) }}">
+      {{ form.hidden_tag() }}
+      <div class="patient-form-contents">
+        <div class="left-patient-form">
+          <div class="form-group">
+            {{ form.first_name.label }} {{ form.first_name(class="form-control", value=patient.first_name) }}
+            {% for error in form.first_name.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
           </div>
-    </div>
-</div>
+          <!-- Add the other form fields here -->
+          <div class="form-group">
+            {{ form.last_name.label }} {{ form.last_name(class="form-control", value=patient.last_name) }}
+            {% for error in form.last_name.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.date_of_birth.label }} {{ form.date_of_birth(class="form-control", value=patient.date_of_birth) }}
+            {% for error in form.date_of_birth.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.gender.label }} {{ form.gender(class="form-control", value=patient.gender) }}
+            {% for error in form.gender.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.national_id_number.label }} {{ form.national_id_number(class="form-control", value=patient.national_id_number) }}
+            {% for error in form.national_id_number.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="right-patient-form">
+          <div class="form-group">
+            {{ form.address.label }} {{ form.address(class="form-control", value=patient.address) }}
+            {% for error in form.address.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.phone_number.label }} {{ form.phone_number(class="form-control", value=patient.phone_number) }}
+            {% for error in form.phone_number.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.email.label }} {{ form.email(class="form-control", value=patient.email) }}
+            {% for error in form.email.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.emergency_contact_name.label }} {{ form.emergency_contact_name(class="form-control", value=patient.emergency_contact_name) }}
+            {% for error in form.emergency_contact_name.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.emergency_contact_number.label }} {{ form.emergency_contact_number(class="form-control", value=patient.emergency_contact_number) }}
+            {% for error in form.emergency_contact_number.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="patient-form-end">
+          <div class="form-group">
+            {{ form.insurance_provider.label }} {{ form.insurance_provider(class="form-control", value=patient.insurance_provider) }}
+            {% for error in form.insurance_provider.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.insurance_policy_number.label }} {{ form.insurance_policy_number(class="form-control", value=patient.insurance_policy_number) }}
+            {% for error in form.insurance_policy_number.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.primary_care_physician.label }} {{ form.primary_care_physician(class="form-control", value=patient.primary_care_physician) }}
+            {% for error in form.primary_care_physician.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.allergies.label }} {{ form.allergies(class="form-control", value=patient.allergies) }}
+            {% for error in form.allergies.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="patient-form-far-right">
+          <div class="form-group">
+            {{ form.medications.label }} {{ form.medications(class="form-control", value=patient.medications) }}
+            {% for error in form.medications.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.medical_conditions.label }} {{ form.medical_conditions(class="form-control", value=patient.medical_conditions) }}
+            {% for error in form.medical_conditions.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.surgeries.label }} {{ form.surgeries(class="form-control", value=patient.surgeries) }}
+            {% for error in form.surgeries.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            {{ form.submit(class="button success patient-submit-btn") }}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 {% endblock %}

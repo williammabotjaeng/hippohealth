@@ -338,7 +338,7 @@ def delete_patient(patient_id):
 @login_required
 def view_patient(patient_id):
     patient = Patient.query.get_or_404(patient_id)
-    return render_template('view_patient.html', patient=patient)
+    return render_template('patient.html', patient=patient)
 
 @app.route("/what")
 def what():

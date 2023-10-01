@@ -256,3 +256,32 @@
     background-color: none;
     color: red;
 }
+
+.patient-card {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 40px;
+}
+
+.top-nav-patient {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-nav-edit-patient {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-from-edit-patient-btn {
+    margin-right: 20px;
+}
+
+.back-from-view-patient-btn {
+    margin-left: 120px;
+}
