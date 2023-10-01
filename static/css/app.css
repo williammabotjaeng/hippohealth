@@ -126,7 +126,7 @@
 }
 
 .patients-box, .apps-box, .schedule-box, .tiers-box,
-.notifications-box, .settings-box {
+.prescriptions-box, .settings-box {
     height: 30vh;
     width: 100%;
     text-align: center;
@@ -159,8 +159,8 @@
     background-size: cover;
 }
 
-.notifications-box {
-    background-image: url("../images/notifications-img.png");
+.prescriptions-box {
+    background-image: url("../images/prescriptions-img.png");
     background-position: center;
     background-size: cover;
 }
@@ -198,7 +198,7 @@
     margin: 0px 20px;
 }
 
-.empty-state-patients, .empty-state-tiers, .empty-state-appointments {
+.empty-state-patients, .empty-state-tiers, .empty-state-appointments, .empty-state-prescriptions {
     display: flex;
     flex-direction: column;
     text-align: center;
