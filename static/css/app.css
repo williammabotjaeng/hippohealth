@@ -186,3 +186,10 @@
     background-color: black;
     transition: 0.5s ease-in-out;
 }
+
+.top-nav-patients {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
