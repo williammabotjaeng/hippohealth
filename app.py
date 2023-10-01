@@ -233,10 +233,10 @@ def register():
           
             # Send email to the new user
             msg = Message(
-                subject="Welcome to TopoLock!",
+                subject="Welcome to HippoHealth!",
                 sender=app.config["MAIL_USERNAME"],
                 recipients=[username],
-                body=f"Hi {username},\n\nThank you for registering on our website. We are excited to have you as a member!\n\nBest regards,\nTopoLock Team"
+                body=f"Hi {username},\n\nThank you for registering on our website. We are excited to have you as a member!\n\nBest regards,\nHippoHealth Team"
             )
             mail.send(msg)
 
@@ -247,18 +247,28 @@ def register():
             return redirect(url_for('home'))
     return render_template("register.html", form=form)
 
-@login_required
 @app.route("/home")
+@login_required
 def home():
-    form = ContactForm()
-    contacts = Contact.query.filter_by(user_id=current_user.id).all()
-    trusted_contacts = Contact.query.filter_by(user_id=current_user.id, status="Trusted").all()
-    untrusted_contacts = Contact.query.filter_by(user_id=current_user.id, status="Untrusted").all()
-    return render_template("home.html", current_user=current_user, form=form, contacts=contacts, trusted_contacts=trusted_contacts, untrusted_contacts=untrusted_contacts)
+    return render_template("home.html", current_user=current_user)
+
+@app.route("/schedule")
+@login_required
+def schedule():
+    return render_template("schedule.html", current_user=current_user)
+
+@app.route("/patients")
+@login_required
+def patients():
+    return render_template("patients.html", current_user=current_user)
 
 @app.route("/what")
 def what():
     return render_template("what.html")
+
+@app.route("/how")
+def how():
+    return render_template("how.html")
 
 @app.route("/getintouch", methods=["GET", "POST"])
 def contact():
@@ -271,7 +281,7 @@ def contact():
         msg = Message(
             subject="New Message from Contact Form",
             sender=app.config["MAIL_USERNAME"],
-            recipients=["topolockapp@gmail.com"],
+            recipients=["hippohealthapp@gmail.com"],
             body=f"Name: {name}\nEmail: {email}\nMessage: {message}"
         )
 

@@ -17,17 +17,24 @@
     <nav class="top-bar main-nav bg-emerald" data-topbar role="navigation">
       <ul class="dropdown menu bg-emerald" data-dropdown-menu>
         <li class="name">
-          <h1><a href="#" class="bg-emerald">
+          <h1><a href="/" class="bg-emerald">
             <img width="20%" src="{{ url_for('static', filename='images/hippohealth-logo.png') }}" alt="logo">
         </a></h1>
         </li>
       </ul>
       <section class="top-bar-section">
         <ul class="dropdown menu bg-emerald" data-dropdown-menu>
-          <li><a href="#" class="white-text">Home</a></li>
-          <li><a href="#" class="white-text">About</a></li>
-          <li><a href="#" class="white-text">Services</a></li>
-          <li><a href="#" class="white-text">Contact</a></li>
+          <li><a href="/" class="white-text">Home</a></li>
+          {% if not current_user.is_authenticated %}
+            <li><a href="{{ url_for('register')}}" class="white-text">Register</a></li>
+            <li><a href="{{ url_for('login')}}" class="white-text">Login</a></li>
+          {% else %}
+            <li><a href="{{ url_for('patients')}}" class="white-text">Patients</a></li>
+            <li><a href="{{ url_for('schedule')}}" class="white-text">Schedule</a></li>
+            <li><a href="{{ url_for('logout')}}" class="white-text">Log Out</a></li>
+          {% endif %}
+          <li><a href="{{ url_for('how')}}" class="white-text">How it Works</a></li>
+          <li><a href="/getintouch" class="white-text">Contact</a></li>
         </ul>
       </section>
     </nav>
@@ -38,7 +45,7 @@
   </main>
 
   <footer class="main-footer">
-    <p>&copy; 2023 Your Company. All rights reserved.</p>
+    <p>&copy; 2023 HippoHealth &copy; All rights reserved.</p>
   </footer>
 
   <script src="{{ url_for('static', filename='js/vendor/jquery.js') }}"></script>

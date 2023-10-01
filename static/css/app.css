@@ -27,5 +27,100 @@
 }
 
 .main-content {
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.left-home {
+    float: left;
+    width: 100%;
+    padding: 20px;
+    background-image: url("../images/home-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.right-home {
+    float: right;
+    width: 100%;
+    padding: 40px;
+}
+
+.right-login {
+    float: right;
+    width: 100%;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../images/login-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.right-registration {
+    float: right;
+    width: 100%;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../images/registration-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.left-login {
+    float: left;
+    width: 100%;
+    padding: 40px;
+}
+
+.block-label {
+    display: block;
+}
+
+.registration-form {
+    padding: 20px;
+}
+
+.quote-text {
+    font-size: 32px;
+    margin-top: 60px;
+    text-align: center;
+    align-items: end;
+    
+}
+
+.quote-text-registration {
+    font-size: 32px;
+    margin-top: 30px;
+    text-align: center;
+    align-items: end;
+    
+}
+
+.contact-main-content {
+    display: flex;
+    align-items: center;
+    padding: 40px;
+    justify-content: center;
+    text-align: center;
+}
+
+.contact-right-form {
+    width: 50%;
+    float: right;
+}
+
+.contact-left-cta {
+    width: 50%;
+    float: left;
+    background-size: cover;
     padding: 10px;
+}
+
+.tall-textarea {
+    height: 100px;
+    padding: 4px;
 }

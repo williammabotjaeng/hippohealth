@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container main-content">
+    <div class="left-login">
+        <div class="row">
+            <div class="column medium-6">
+              <h3 class="h3 lead">Get Started</h3>
+              <form class="registration-form" method="POST" action="{{ url_for('register') }}">
+                {{ form.hidden_tag() }}
+                <div>
+                    <label for="username">Username</label>
+                </div>
+                <div class="input-group">
+                  {{ form.username(class="input-field", placeholder="Enter your username") }}
+                  {% for error in form.username.errors %}
+                    <span class="error-message">{{ error }}</span>
+                  {% endfor %}
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                </div>
+                <div class="input-group">
+                  {{ form.password(class="input-field", placeholder="Enter your password") }}
+                  {% for error in form.password.errors %}
+                    <span class="error-message">{{ error }}</span>
+                  {% endfor %}
+                </div>
+                <button type="submit" class="button success">Register</button>
+              </form>
+            </div>
+          </div>
+    </div>
+    <div class="right-registration">
+        <p class="lead quote-text-registration">
+            To wish to be well is a part of becoming well. If you are surprised at the number of our maladies, count our cooks. Health is the soul that animates all the enjoyments of life, which fade and are tasteless without it.
+            <br>
+            - <strong>Seneca</strong>
+        </p>
+    </div>
+</div>
+{% endblock %}
