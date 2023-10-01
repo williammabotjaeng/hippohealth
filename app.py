@@ -260,6 +260,10 @@ def home():
 def what():
     return render_template("what.html")
 
+@app.route("/how")
+def how():
+    return render_template("how.html")
+
 @app.route("/getintouch", methods=["GET", "POST"])
 def contact():
     form = ContactUsForm()
