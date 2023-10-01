@@ -226,9 +226,24 @@
     width: 100%;
 }
 
+.tier-form-contents {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+
 .left-patient-form, .form-left-appointment {
     float: left;
     padding: 10px;
+}
+
+.tier-left-form {
+    padding: 20px;
+}
+
+.tier-right-form {
+    padding: 20px;
 }
 
 input.form-left-appointment {
