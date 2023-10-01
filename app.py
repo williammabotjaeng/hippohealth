@@ -96,11 +96,34 @@ class Appointment(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     appointment_date = db.Column(db.DateTime, nullable=False)
     appointment_type = db.Column(db.String(100), nullable=False)
+    
     notes = db.Column(db.String(200), nullable=True)
 
     user = db.relationship('User', backref=db.backref('appointments', lazy=True))
     patient = db.relationship('Patient', backref=db.backref('appointments', lazy=True))
 
+class Tier(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    prescriptions = db.relationship('Prescription', backref='tier', lazy=True)
+    appointments = db.relationship('Appointment', backref='tier', lazy=True)
+    reminders = db.relationship('Reminder', backref='tier', lazy=True)
+    frequency = db.Column(db.String(100), nullable=False)
+    assigned_patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    medical_practitioner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    assigned_patient = db.relationship('Patient', backref=db.backref('tiers', lazy=True))
+    medical_practitioner = db.relationship('User', backref=db.backref('tiers', lazy=True))
+
+class Reminder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    medication = db.Column(db.String(100), nullable=False)
+    time_of_day = db.Column(db.String(50), nullable=False)
+    frequency = db.Column(db.String(100), nullable=False)
+    daily_frequency = db.Column(db.String(100), nullable=False)
+    assigned_patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    reminder_email = db.Column(db.String(100), nullable=False)
+
+    assigned_patient = db.relationship('Patient', backref=db.backref('reminders', lazy=True))
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -262,6 +285,24 @@ def schedule():
 def patients():
     patients = Patient.query.all()
     return render_template("patients.html", current_user=current_user, patients=patients)
+
+@app.route("/appointments")
+@login_required
+def appointments():
+    appointments = Appointment.query.all()
+    return render_template("appointments.html", current_user=current_user, appointments=appointments)
+
+@app.route("/prescriptions")
+@login_required
+def prescriptions():
+    prescriptions = Prescription.query.all()
+    return render_template("prescriptions.html", current_user=current_user, prescriptions=prescriptions)
+
+@app.route("/tiers")
+@login_required
+def tiers():
+    tiers = Tier.query.all()
+    return render_template("tiers.html", current_user=current_user, tiers=tiers)
 
 @app.route('/create_patient', methods=['GET', 'POST'])
 @login_required
