@@ -131,6 +131,57 @@
     width: 100%;
     text-align: center;
     align-items: center;
-    background-color: red;
-    border: 1px solid black;
+    border: 1px groove #50C878;
+    padding: 80px;
+}
+
+.patients-box {
+    background-image: url("../images/patients-img.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+.apps-box {
+    background-image: url("../images/appointments-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.schedule-box {
+    background-image: url("../images/schedule-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.tiers-box {
+    background-image: url("../images/tiers-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.notifications-box {
+    background-image: url("../images/notifications-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.settings-box {
+    background-image: url("../images/settings-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.box-text {
+    color: black;
+    border: 2px solid black;
+    background-color: none;
+    padding: 12px;
+    border-radius: 12px;
+    opacity: 1;
+}
+
+.box-text:hover {
+    color: #999;
+    border: 2px solid #999;
+    background-color: none;
 }
