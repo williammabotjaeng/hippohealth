@@ -207,3 +207,39 @@
     padding: 120px;
     margin-left: 180px;
 }
+
+.patient-form-contents {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.left-patient-form {
+    float: left;
+    padding: 10px;
+}
+
+.right-patient-form {
+    float: right;
+    padding: 10px;
+}
+
+.patient-form-end {
+    float: left;
+    padding: 10px;
+}
+
+.patient-form-far-right {
+    float: right;
+    padding: 10px;
+}
+
+.patient-submit-btn {
+    margin-top: 24px;
+}
+
+.patient-container {
+    padding: 10px;
+    margin: 10px;
+    width: 100%;
+}

@@ -1,9 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+  <div class="patient-container">
   <h4>Add a Patient</h4>
   <form method="POST" action="{{ url_for('create_patient') }}">
     {{ form.hidden_tag() }}
+    <div class="patient-form-contents">
+    <div class="left-patient-form">
     <div class="form-group">
       {{ form.first_name.label }} {{ form.first_name(class="form-control") }}
       {% for error in form.first_name.errors %}
@@ -38,7 +41,8 @@
         <span class="text-danger">{{ error }}</span>
         {% endfor %}
     </div>
-    
+    </div>
+    <div class="right-patient-form">
     <div class="form-group">
         {{ form.address.label }} {{ form.address(class="form-control") }}
         {% for error in form.address.errors %}
@@ -67,12 +71,15 @@
         {% endfor %}
     </div>
     
+    
     <div class="form-group">
         {{ form.emergency_contact_number.label }} {{ form.emergency_contact_number(class="form-control") }}
         {% for error in form.emergency_contact_number.errors %}
         <span class="text-danger">{{ error }}</span>
         {% endfor %}
     </div>
+    </div>
+    <div class="patient-form-end">
     
     <div class="form-group">
         {{ form.insurance_provider.label }} {{ form.insurance_provider(class="form-control") }}
@@ -101,7 +108,8 @@
         <span class="text-danger">{{ error }}</span>
         {% endfor %}
     </div>
-    
+    </div>
+    <div class="patient-form-far-right">
     <div class="form-group">
         {{ form.medications.label }} {{ form.medications(class="form-control") }}
         {% for error in form.medications.errors %}
@@ -122,9 +130,15 @@
         <span class="text-danger">{{ error }}</span>
         {% endfor %}
     </div>
-  
     <div class="form-group">
-      {{ form.submit(class="btn btn-primary") }}
+        {{ form.submit(class="button success patient-submit-btn") }}
+      </div>
     </div>
+    </div>
+    
+    </div>
+    </div>
+
   </form>
+</div>
 {% endblock %}
