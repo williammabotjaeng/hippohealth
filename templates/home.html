@@ -1,6 +1,28 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="container">
-  <h1>Home</h1>
+    <br>
+    <div class="grid-x grid-padding-x"> <!-- Aligned to the left -->
+        <div class="cell large-4 patients-box">
+            <p>Patiens</p>
+        </div>
+        <div class="cell large-4 apps-box">
+            <p>Appointments</p>
+        </div>
+        <div class="cell large-4 schedule-box">
+            <p>Schedule</p>
+        </div>
+      </div>
+      <div class="grid-x grid-padding-x"> <!-- Aligned to the right -->
+        <div class="cell large-4 tiers-box">
+            <p>Tiers</p>
+        </div>
+        <div class="cell large-4 notifications-box">
+            <p>Notifications</p>
+        </div>
+        <div class="cell large-4 settings-box">
+            <p>Settings</p>
+        </div>
+      </div>
 </div>
 {% endblock %}

@@ -124,3 +124,13 @@
     height: 100px;
     padding: 4px;
 }
+
+.patients-box, .apps-box, .schedule-box, .tiers-box,
+.notifications-box, .settings-box {
+    height: 30vh;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    background-color: red;
+    border: 1px solid black;
+}
