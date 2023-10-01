@@ -46,6 +46,8 @@ class User(UserMixin, db.Model):
     membership_number = db.Column(db.String(20))
     experience = db.Column(db.Integer)
 
+    schedule = db.relationship('Appointment', backref='user', lazy=True)
+
     def __init__(self, username, password, medical_practitioner_type=None, medical_authority=None,
                  membership_status=None, membership_number=None, experience=None):
         self.username = username
