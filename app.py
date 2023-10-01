@@ -252,6 +252,16 @@ def register():
 def home():
     return render_template("home.html", current_user=current_user)
 
+@app.route("/schedule")
+@login_required
+def schedule():
+    return render_template("schedule.html", current_user=current_user)
+
+@app.route("/patients")
+@login_required
+def patients():
+    return render_template("patients.html", current_user=current_user)
+
 @app.route("/what")
 def what():
     return render_template("what.html")

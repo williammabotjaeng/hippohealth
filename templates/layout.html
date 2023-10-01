@@ -25,8 +25,14 @@
       <section class="top-bar-section">
         <ul class="dropdown menu bg-emerald" data-dropdown-menu>
           <li><a href="/" class="white-text">Home</a></li>
-          <li><a href="{{ url_for('register')}}" class="white-text">Register</a></li>
-          <li><a href="{{ url_for('login')}}" class="white-text">Login</a></li>
+          {% if not current_user.is_authenticated %}
+            <li><a href="{{ url_for('register')}}" class="white-text">Register</a></li>
+            <li><a href="{{ url_for('login')}}" class="white-text">Login</a></li>
+          {% else %}
+            <li><a href="{{ url_for('patients')}}" class="white-text">Patiens</a></li>
+            <li><a href="{{ url_for('schedule')}}" class="white-text">Schedule</a></li>
+            <li><a href="{{ url_for('logout')}}" class="white-text">Log Out</a></li>
+          {% endif %}
           <li><a href="{{ url_for('how')}}" class="white-text">How it Works</a></li>
           <li><a href="/getintouch" class="white-text">Contact</a></li>
         </ul>
