@@ -243,3 +243,15 @@
     margin: 10px;
     width: 100%;
 }
+
+.actions-cell {
+    display: flex; 
+    flex-direction: row; 
+    flex-grow: 1;
+}
+
+.delete-btn {
+    display: inline; 
+    border: none; 
+    background-color: none;
+}

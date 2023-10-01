@@ -31,9 +31,9 @@
                     <td>{{ patient.date_of_birth }}</td>
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.national_id_number }}</td>
-                    <td style="display: flex; flex-direction: row;">
-                        <a href="{{ url_for('edit_patient', patient_id=patient.id) }}"><i class="fi-pencil"></i></a>
-                        <form method="post" action="{{ url_for('delete_patient', patient_id=patient.id) }}"><button type="submit" style="display: inline; border: none; background-color: none;"><i class="fi-trash"></i></button></form>
+                    <td class="actions-cell">
+                        <a href="{{ url_for('edit_patient', patient_id=patient.id) }}"><i class="fi-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <form method="post" action="{{ url_for('delete_patient', patient_id=patient.id) }}"><button type="submit" class="delete-btn"><i class="fi-trash"></i></button></form>&nbsp;&nbsp;&nbsp;&nbsp;
                         <a href="{{ url_for('view_patient', patient_id=patient.id) }}"><i class="fi-eye"></i></a>
                     </td>
                     </tr>
