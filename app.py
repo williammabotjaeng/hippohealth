@@ -264,6 +264,7 @@ def patients():
     return render_template("patients.html", current_user=current_user, patients=patients)
 
 @app.route('/create_patient', methods=['GET', 'POST'])
+@login_required
 def create_patient():
     form = PatientForm()
     if form.validate_on_submit():
@@ -284,13 +285,60 @@ def create_patient():
             allergies=form.allergies.data,
             medications=form.medications.data,
             medical_conditions=form.medical_conditions.data,
-            surgeries=form.surgeries.data
+            surgeries=form.surgeries.data,
+            user_id=current_user.id
         )
         db.session.add(patient)
         db.session.commit()
         flash('Patient saved successfully!', 'success')
         return redirect(url_for('patients'))
     return render_template('create_patient.html', form=form)
+
+@app.route('/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
+@login_required
+def edit_patient(patient_id):
+    patient = Patient.query.get_or_404(patient_id)
+    form = PatientForm(obj=patient)
+    
+    if form.validate_on_submit():
+        patient.first_name = form.first_name.data
+        patient.last_name = form.last_name.data
+        patient.date_of_birth = form.date_of_birth.data
+        patient.gender = form.gender.data
+        patient.national_id_number = form.national_id_number.data
+        patient.address = form.address.data
+        patient.phone_number = form.phone_number.data
+        patient.email = form.email.data
+        patient.emergency_contact_name = form.emergency_contact_name.data
+        patient.emergency_contact_number = form.emergency_contact_number.data
+        patient.insurance_provider = form.insurance_provider.data
+        patient.insurance_policy_number = form.insurance_policy_number.data
+        patient.primary_care_physician = form.primary_care_physician.data
+        patient.allergies = form.allergies.data
+        patient.medications = form.medications.data
+        patient.medical_conditions = form.medical_conditions.data
+        patient.surgeries = form.surgeries.data
+        
+        db.session.commit()
+        flash('Patient updated successfully!', 'success')
+        return redirect(url_for('patients'))
+    
+    return render_template('edit_patient.html', form=form, patient=patient)
+
+@app.route('/delete_patient/<int:patient_id>', methods=['POST'])
+@login_required
+def delete_patient(patient_id):
+    patient = Patient.query.get_or_404(patient_id)
+    db.session.delete(patient)
+    db.session.commit()
+    flash('Patient deleted successfully!', 'success')
+    return redirect(url_for('patients'))
+
+@app.route('/view_patient/<int:patient_id>')
+@login_required
+def view_patient(patient_id):
+    patient = Patient.query.get_or_404(patient_id)
+    return render_template('view_patient.html', patient=patient)
 
 @app.route("/what")
 def what():
