@@ -4,10 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from flask_mail import Message, Mail
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField, IntegerField
 from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, date
 
 import moment
 import requests
@@ -110,11 +110,15 @@ class Tier(db.Model):
     appointments = db.relationship('Appointment', backref='tier', lazy=True)
     reminders = db.relationship('Reminder', backref='tier', lazy=True)
     frequency = db.Column(db.String(100), nullable=False)
+    treatment_period = db.Column(db.Integer, default=7, nullable=False)
+    start_date = db.Column(db.Date, nullable=False, default=date.today())
+    end_date = db.Column(db.Date, nullable=False, default=date.today())
     assigned_patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     medical_practitioner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     assigned_patient = db.relationship('Patient', backref=db.backref('tiers', lazy=True))
     medical_practitioner = db.relationship('User', backref=db.backref('tiers', lazy=True))
+
 
 class Reminder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -207,6 +211,15 @@ class ContactUsForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     message = TextAreaField("Message", validators=[DataRequired()])
     submit = SubmitField("Send")
+
+class TierForm(FlaskForm):
+    frequency = StringField('Frequency', validators=[DataRequired()])
+    treatment_period = IntegerField('Treatment Period', default=7, validators=[DataRequired()])
+    start_date = DateField('Start Date', validators=[DataRequired()])
+    end_date = DateField('End Date', validators=[DataRequired()])
+    assigned_patient_id = IntegerField('Assigned Patient ID', validators=[DataRequired()])
+    medical_practitioner_id = IntegerField('Medical Practitioner ID', validators=[DataRequired()])
+    submit = SubmitField("Save Tier")
 
 @app.route("/")
 def index():
@@ -336,6 +349,44 @@ def create_patient():
         flash('Patient saved successfully!', 'success')
         return redirect(url_for('patients'))
     return render_template('create_patient.html', form=form)
+
+@app.route('/create_appointment', methods=['GET', 'POST'])
+@login_required
+def create_appointment():
+    form = AppointmentForm()
+    if form.validate_on_submit():
+        appointment = Appointment(
+            user_id=form.user_id.data,
+            patient_id=form.patient_id.data,
+            appointment_date=form.appointment_date.data,
+            appointment_type=form.appointment_type.data,
+            notes=form.notes.data
+        )
+        db.session.add(appointment)
+        db.session.commit()
+        flash('Appointment saved successfully!', 'success')
+        return redirect(url_for('appointments'))
+    return render_template('create_appointment.html', form=form)
+
+@app.route('/create_prescription', methods=['GET', 'POST'])
+@login_required
+def create_prescription():
+    form = PrescriptionForm()
+    if form.validate_on_submit():
+        prescription = Prescription(
+            patient_id=form.patient_id.data,
+            medication=form.medication.data,
+            dosage=form.dosage.data,
+            instructions=form.instructions.data,
+            date_prescribed=form.date_prescribed.data,
+            prescribing_physician=form.prescribing_physician.data
+        )
+        db.session.add(prescription)
+        db.session.commit()
+        flash('Prescription saved successfully!', 'success')
+        return redirect(url_for('prescriptions'))
+    return render_template('create_prescription.html', form=form)
+
 
 @app.route('/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
 @login_required
