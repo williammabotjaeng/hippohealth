@@ -1,18 +1,11 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="container main-content">
-    <div class="left-home">
-        <p class="lead">
-            Never will the doctrine of spontaneous generation recover from the mortal blow struck by this simple experiment.
-            <br>
-            - <strong>Louis Pasteur</strong>
-        </p>
-    </div>
-    <div class="right-home">
+    <div class="left-login">
         <div class="row">
             <div class="column medium-6">
-              <h3 class="h3 lead">Get Started</h3>
-              <form class="registration-form" method="POST" action="{{ url_for('register') }}">
+              <h3 class="h3 lead">Sign in</h3>
+              <form class="registration-form" method="POST" action="{{ url_for('login') }}">
                 {{ form.hidden_tag() }}
                 <div>
                     <label for="username">Username</label>
@@ -32,10 +25,18 @@
                     <span class="error-message">{{ error }}</span>
                   {% endfor %}
                 </div>
-                <button type="submit" class="button success">Register</button>
+                <button type="submit" class="button success">Login</button>
               </form>
             </div>
           </div>
+    </div>
+    <div class="right-login">
+        <p class="lead quote-text">
+            Health is a matter of choice, not a mystery of chance.
+            <br>
+            <br>
+            - <strong>Aristotle</strong>
+        </p>
     </div>
 </div>
 {% endblock %}
