@@ -192,15 +192,24 @@ class PatientForm(FlaskForm):
     medical_conditions = StringField('Medical Conditions', validators=[Length(max=200)])
     surgeries = StringField('Surgeries', validators=[Length(max=200)])
     submit = SubmitField('Save Patient')
-
 class PrescriptionForm(FlaskForm):
-    patient_id = StringField('Patient ID', validators=[InputRequired()])
+    # Existing fields
+    patient_id = SelectField('Patient ID', validators=[InputRequired()])
     medication = StringField('Medication', validators=[InputRequired(), Length(max=200)])
     dosage = StringField('Dosage', validators=[InputRequired(), Length(max=50)])
     instructions = StringField('Instructions', validators=[Length(max=200)])
     date_prescribed = DateField('Date Prescribed', validators=[InputRequired()])
     prescribing_physician = StringField('Prescribing Physician', validators=[InputRequired(), Length(max=100)])
     submit = SubmitField('Save Prescription')
+
+    # New field
+    patient_email = SelectField('Patient Email', validators=[InputRequired()])
+
+    def __init__(self, *args, **kwargs):
+        super(PrescriptionForm, self).__init__(*args, **kwargs)
+        # Populate the patient_email field with patient emails as labels
+        # and pass the ID of the selected patient to the patient_id field
+        self.patient_email.choices = [(patient.id, patient.email) for patient in Patient.query.filter_by(user_id=current_user.id).all()]
 class AppointmentForm(FlaskForm):
     tier_id = SelectField('Tier ID', validators=[InputRequired()], coerce=int)
     patient_id = SelectField('Patient ID', validators=[InputRequired()], coerce=int)
