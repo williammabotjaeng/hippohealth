@@ -187,7 +187,7 @@
     transition: 0.5s ease-in-out;
 }
 
-.top-nav-patients {
+.top-nav-patients, .top-nav-appointment {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -309,4 +309,8 @@
 
 .settings-submit-btn {
     margin-top: 52px;
+}
+
+.appointment-container {
+    padding: 40px;
 }

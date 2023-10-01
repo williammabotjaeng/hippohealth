@@ -1,39 +1,44 @@
 {% extends 'layout.html' %}
+
 {% block content %}
-<div class="container main-content">
-    <div class="left-home">
-        <p class="lead">
-            Introducing <strong>HippoHealth</strong>, the groundbreaking healthcare platform that puts your well-being first. With our state-of-the-art technology and user-friendly interface, we empower individuals to take control of their health like never before. From seamless appointment scheduling and personalized health insights to virtual consultations with top-notch medical professionals, HippoHealth revolutionizes the way you access and manage your healthcare. Say goodbye to long wait times and hello to convenience, efficiency, and quality care. <strong>Join HippoHealth</strong> today and experience a new era of personalized and accessible healthcare at your fingertips.
-        </p>
+<div class="appointment-container">
+  <div class="top-nav-appointment">
+    <h4>Create an Appointment</h4>
+    <a href="/appointments" class="button success">Back to Appointments</a>
+  </div>
+  
+  <form method="POST" action="{{ url_for('create_appointment') }}">
+    {{ form.hidden_tag() }}
+    <div class="appointment-form-contents">
+      <div class="form-group">
+        {{ form.patient_id.label }} {{ form.patient_id(class="form-control") }}
+        {% for error in form.patient_id.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <!-- Add the other form fields here -->
+      <div class="form-group">
+        {{ form.appointment_date.label }} {{ form.appointment_date(class="form-control") }}
+        {% for error in form.appointment_date.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.appointment_type.label }} {{ form.appointment_type(class="form-control") }}
+        {% for error in form.appointment_type.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.notes.label }} {{ form.notes(class="form-control") }}
+        {% for error in form.notes.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      </div>
+      <div class="form-group">
+        {{ form.submit(class="button success appointment-submit-btn") }}
+      </div>
     </div>
-    <div class="right-home">
-        <div class="row">
-            <div class="column medium-6">
-              <h3 class="h3 lead">Get Started</h3>
-              <form class="registration-form" method="POST" action="{{ url_for('register') }}">
-                {{ form.hidden_tag() }}
-                <div>
-                    <label for="username">Username</label>
-                </div>
-                <div class="input-group">
-                  {{ form.username(class="input-field", placeholder="Enter your username") }}
-                  {% for error in form.username.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                </div>
-                <div class="input-group">
-                  {{ form.password(class="input-field", placeholder="Enter your password") }}
-                  {% for error in form.password.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <button type="submit" class="button success">Register</button>
-              </form>
-            </div>
-          </div>
-    </div>
+  </form>
 </div>
 {% endblock %}
