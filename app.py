@@ -170,7 +170,7 @@ class UserForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Length(min=6, max=100)])
     phone_number = StringField('Phone Number')
     address = StringField('Address')
-    submit = SubmitField('Save User')
+    submit = SubmitField('Save Profile')
 
 class PatientForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(max=100)])
@@ -303,6 +303,32 @@ def schedule():
 def patients():
     patients = Patient.query.all()
     return render_template("patients.html", current_user=current_user, patients=patients)
+
+@app.route("/settings")
+@login_required
+def settings():
+    form = UserForm()
+    return render_template("settings.html", current_user=current_user, form=form)
+
+@app.route('/update_user', methods=['GET', 'POST'])
+def update_user():
+    form = UserForm()
+    if form.validate_on_submit():
+        # Logic to update the user's information in the database
+        user = User.query.get(current_user.id)  # Assuming you have a current_user object
+        user.username = form.username.data
+        user.password = form.password.data
+        user.medical_practitioner_type = form.medical_practitioner_type.data
+        user.medical_authority = form.medical_authority.data
+        user.membership_status = form.membership_status.data
+        user.membership_number = form.membership_number.data
+        user.experience = form.experience.data
+        db.session.commit()
+
+        return redirect(url_for('settings'))  # Redirect to the user's profile page after successful update
+
+    return render_template('settings.html', form=form)
+
 
 @app.route("/appointments")
 @login_required
