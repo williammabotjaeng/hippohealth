@@ -193,3 +193,17 @@
     justify-content: space-between;
     width: 100%;
 }
+
+.table-container {
+    margin: 0px 20px;
+}
+
+.empty-state-patients {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding: 120px;
+    margin-left: 180px;
+}

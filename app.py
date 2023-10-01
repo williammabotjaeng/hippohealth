@@ -260,7 +260,37 @@ def schedule():
 @app.route("/patients")
 @login_required
 def patients():
-    return render_template("patients.html", current_user=current_user)
+    patients = Patient.query.all()
+    return render_template("patients.html", current_user=current_user, patients=patients)
+
+@app.route('/create_patient', methods=['GET', 'POST'])
+def create_patient():
+    form = PatientForm()
+    if form.validate_on_submit():
+        patient = Patient(
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            date_of_birth=form.date_of_birth.data,
+            gender=form.gender.data,
+            national_id_number=form.national_id_number.data,
+            address=form.address.data,
+            phone_number=form.phone_number.data,
+            email=form.email.data,
+            emergency_contact_name=form.emergency_contact_name.data,
+            emergency_contact_number=form.emergency_contact_number.data,
+            insurance_provider=form.insurance_provider.data,
+            insurance_policy_number=form.insurance_policy_number.data,
+            primary_care_physician=form.primary_care_physician.data,
+            allergies=form.allergies.data,
+            medications=form.medications.data,
+            medical_conditions=form.medical_conditions.data,
+            surgeries=form.surgeries.data
+        )
+        db.session.add(patient)
+        db.session.commit()
+        flash('Patient saved successfully!', 'success')
+        return redirect(url_for('patients'))
+    return render_template('create_patient.html', form=form)
 
 @app.route("/what")
 def what():
