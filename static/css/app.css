@@ -54,7 +54,18 @@
     padding: 20px;
     justify-content: center;
     align-items: center;
-    background-image: url("../images/home-img.png");
+    background-image: url("../images/login-img.png");
+    background-position: center;
+    background-size: cover;
+}
+
+.right-registration {
+    float: right;
+    width: 100%;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../images/registration-img.png");
     background-position: center;
     background-size: cover;
 }
