@@ -4,10 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from flask_mail import Message, Mail
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField, DateField, DateTimeField, IntegerField
 from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, date
 
 import moment
 import requests
@@ -46,6 +46,8 @@ class User(UserMixin, db.Model):
     membership_number = db.Column(db.String(20))
     experience = db.Column(db.Integer)
 
+    schedule = db.relationship('Appointment', backref='user', lazy=True)
+
     def __init__(self, username, password, medical_practitioner_type=None, medical_authority=None,
                  membership_status=None, membership_number=None, experience=None):
         self.username = username
@@ -82,6 +84,7 @@ class Patient(db.Model):
 class Prescription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     medication = db.Column(db.String(200), nullable=False)
     dosage = db.Column(db.String(50), nullable=False)
     instructions = db.Column(db.String(200), nullable=True)
@@ -93,14 +96,43 @@ class Prescription(db.Model):
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     appointment_date = db.Column(db.DateTime, nullable=False)
     appointment_type = db.Column(db.String(100), nullable=False)
+    
     notes = db.Column(db.String(200), nullable=True)
 
-    user = db.relationship('User', backref=db.backref('appointments', lazy=True))
+    creator = db.relationship('User', backref=db.backref('appointments', lazy=True))
     patient = db.relationship('Patient', backref=db.backref('appointments', lazy=True))
 
+class Tier(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    prescriptions = db.relationship('Prescription', backref='tier', lazy=True)
+    appointments = db.relationship('Appointment', backref='tier', lazy=True)
+    reminders = db.relationship('Reminder', backref='tier', lazy=True)
+    frequency = db.Column(db.String(100), nullable=False)
+    treatment_period = db.Column(db.Integer, default=7, nullable=False)
+    start_date = db.Column(db.Date, nullable=False, default=date.today())
+    end_date = db.Column(db.Date, nullable=False, default=date.today())
+    assigned_patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    medical_practitioner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    assigned_patient = db.relationship('Patient', backref=db.backref('tiers', lazy=True))
+    medical_practitioner = db.relationship('User', backref=db.backref('tiers', lazy=True))
+
+
+class Reminder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    medication = db.Column(db.String(100), nullable=False)
+    time_of_day = db.Column(db.String(50), nullable=False)
+    frequency = db.Column(db.String(100), nullable=False)
+    daily_frequency = db.Column(db.String(100), nullable=False)
+    assigned_patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
+    reminder_email = db.Column(db.String(100), nullable=False)
+
+    assigned_patient = db.relationship('Patient', backref=db.backref('reminders', lazy=True))
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -138,7 +170,7 @@ class UserForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Length(min=6, max=100)])
     phone_number = StringField('Phone Number')
     address = StringField('Address')
-    submit = SubmitField('Save User')
+    submit = SubmitField('Save Profile')
 
 class PatientForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(max=100)])
@@ -182,6 +214,15 @@ class ContactUsForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     message = TextAreaField("Message", validators=[DataRequired()])
     submit = SubmitField("Send")
+
+class TierForm(FlaskForm):
+    frequency = StringField('Frequency', validators=[DataRequired()])
+    treatment_period = IntegerField('Treatment Period', default=7, validators=[DataRequired()])
+    start_date = DateField('Start Date', validators=[DataRequired()])
+    end_date = DateField('End Date', validators=[DataRequired()])
+    assigned_patient_id = IntegerField('Assigned Patient ID', validators=[DataRequired()])
+    medical_practitioner_id = IntegerField('Medical Practitioner ID', validators=[DataRequired()])
+    submit = SubmitField("Save Tier")
 
 @app.route("/")
 def index():
@@ -263,6 +304,50 @@ def patients():
     patients = Patient.query.all()
     return render_template("patients.html", current_user=current_user, patients=patients)
 
+@app.route("/settings")
+@login_required
+def settings():
+    form = UserForm()
+    return render_template("settings.html", current_user=current_user, form=form)
+
+@app.route('/update_user', methods=['GET', 'POST'])
+def update_user():
+    form = UserForm()
+    if form.validate_on_submit():
+        # Logic to update the user's information in the database
+        user = User.query.get(current_user.id)  # Assuming you have a current_user object
+        user.username = form.username.data
+        user.password = form.password.data
+        user.medical_practitioner_type = form.medical_practitioner_type.data
+        user.medical_authority = form.medical_authority.data
+        user.membership_status = form.membership_status.data
+        user.membership_number = form.membership_number.data
+        user.experience = form.experience.data
+        db.session.commit()
+
+        return redirect(url_for('settings'))  # Redirect to the user's profile page after successful update
+
+    return render_template('settings.html', form=form)
+
+
+@app.route("/appointments")
+@login_required
+def appointments():
+    appointments = Appointment.query.all()
+    return render_template("appointments.html", current_user=current_user, appointments=appointments)
+
+@app.route("/prescriptions")
+@login_required
+def prescriptions():
+    prescriptions = Prescription.query.all()
+    return render_template("prescriptions.html", current_user=current_user, prescriptions=prescriptions)
+
+@app.route("/tiers")
+@login_required
+def tiers():
+    tiers = Tier.query.all()
+    return render_template("tiers.html", current_user=current_user, tiers=tiers)
+
 @app.route('/create_patient', methods=['GET', 'POST'])
 @login_required
 def create_patient():
@@ -293,6 +378,63 @@ def create_patient():
         flash('Patient saved successfully!', 'success')
         return redirect(url_for('patients'))
     return render_template('create_patient.html', form=form)
+
+@app.route('/create_appointment', methods=['GET', 'POST'])
+@login_required
+def create_appointment():
+    form = AppointmentForm()
+    if form.validate_on_submit():
+        appointment = Appointment(
+            user_id=form.user_id.data,
+            patient_id=form.patient_id.data,
+            appointment_date=form.appointment_date.data,
+            appointment_type=form.appointment_type.data,
+            notes=form.notes.data
+        )
+        db.session.add(appointment)
+        db.session.commit()
+        flash('Appointment saved successfully!', 'success')
+        return redirect(url_for('appointments'))
+    return render_template('create_appointment.html', form=form)
+
+@app.route('/create_prescription', methods=['GET', 'POST'])
+@login_required
+def create_prescription():
+    form = PrescriptionForm()
+    if form.validate_on_submit():
+        prescription = Prescription(
+            patient_id=form.patient_id.data,
+            medication=form.medication.data,
+            dosage=form.dosage.data,
+            instructions=form.instructions.data,
+            date_prescribed=form.date_prescribed.data,
+            prescribing_physician=form.prescribing_physician.data
+        )
+        db.session.add(prescription)
+        db.session.commit()
+        flash('Prescription saved successfully!', 'success')
+        return redirect(url_for('prescriptions'))
+    return render_template('create_prescription.html', form=form)
+
+@app.route('/create_tier', methods=['GET', 'POST'])
+@login_required
+def create_tier():
+    form = TierForm()
+    if form.validate_on_submit():
+        tier = Tier(
+            frequency=form.frequency.data,
+            treatment_period=form.treatment_period.data,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data,
+            assigned_patient_id=form.assigned_patient_id.data,
+            medical_practitioner_id=form.medical_practitioner_id.data
+        )
+        db.session.add(tier)
+        db.session.commit()
+        flash('Tier saved successfully!', 'success')
+        return redirect(url_for('tiers'))
+    return render_template('create_tier.html', form=form)
+
 
 @app.route('/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
 @login_required
@@ -338,7 +480,7 @@ def delete_patient(patient_id):
 @login_required
 def view_patient(patient_id):
     patient = Patient.query.get_or_404(patient_id)
-    return render_template('view_patient.html', patient=patient)
+    return render_template('patient.html', patient=patient)
 
 @app.route("/what")
 def what():

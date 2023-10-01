@@ -1,39 +1,50 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="container main-content">
-    <div class="left-home">
-        <p class="lead">
-            Introducing <strong>HippoHealth</strong>, the groundbreaking healthcare platform that puts your well-being first. With our state-of-the-art technology and user-friendly interface, we empower individuals to take control of their health like never before. From seamless appointment scheduling and personalized health insights to virtual consultations with top-notch medical professionals, HippoHealth revolutionizes the way you access and manage your healthcare. Say goodbye to long wait times and hello to convenience, efficiency, and quality care. <strong>Join HippoHealth</strong> today and experience a new era of personalized and accessible healthcare at your fingertips.
-        </p>
-    </div>
-    <div class="right-home">
-        <div class="row">
-            <div class="column medium-6">
-              <h3 class="h3 lead">Get Started</h3>
-              <form class="registration-form" method="POST" action="{{ url_for('register') }}">
-                {{ form.hidden_tag() }}
-                <div>
-                    <label for="username">Username</label>
-                </div>
-                <div class="input-group">
-                  {{ form.username(class="input-field", placeholder="Enter your username") }}
-                  {% for error in form.username.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                </div>
-                <div class="input-group">
-                  {{ form.password(class="input-field", placeholder="Enter your password") }}
-                  {% for error in form.password.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <button type="submit" class="button success">Register</button>
-              </form>
-            </div>
-          </div>
-    </div>
-</div>
+{% if prescriptions|length > 0 %}
+        <div class="top-nav-prescriptions">
+            <h4 class="h4 lead">
+                Prescriptions
+            </h4>
+            <button class="button success">
+                Add a Prescription
+            </button>
+        </div>
+        </div>
+        <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                    <th>Medication</th>
+                    <th>Dosage</th>
+                    <th>Instructions</th>
+                    <th>Date Prescribed</th>
+                    <th>Prescribing Physician</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prescription in prescriptions %}
+                    <tr>
+                        <td>{{ prescription.medication }}</td>
+                        <td>{{ prescription.dosage }}</td>
+                        <td>{{ prescription.instructions }}</td>
+                        <td>{{ prescription.date_prescribed }}</td>
+                        <td>{{ prescription.prescribing_physician }}</td>
+                        <td class="actions-cell">
+                            <a href="{{ url_for('edit_prescription', prescription_id=prescription.id) }}"><i class="fi-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <form method="post" action="{{ url_for('delete_prescription', prescription_id=prescription.id) }}"><button type="submit" class="delete-btn"><i class="fi-trash"></i></button></form>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="{{ url_for('view_prescription', prescription_id=prescription.id) }}"><i class="fi-eye"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+{% else %}
+        <div class="empty-state-prescriptions">
+            <h1>You have not created any Prescriptions</h1>
+            <a class="button success" href="/create_prescription">Create your first Prescription</a>
+        </div>
+{% endif %}
 {% endblock %}

@@ -1,39 +1,48 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="container main-content">
-    <div class="left-home">
-        <p class="lead">
-            Introducing <strong>HippoHealth</strong>, the groundbreaking healthcare platform that puts your well-being first. With our state-of-the-art technology and user-friendly interface, we empower individuals to take control of their health like never before. From seamless appointment scheduling and personalized health insights to virtual consultations with top-notch medical professionals, HippoHealth revolutionizes the way you access and manage your healthcare. Say goodbye to long wait times and hello to convenience, efficiency, and quality care. <strong>Join HippoHealth</strong> today and experience a new era of personalized and accessible healthcare at your fingertips.
-        </p>
-    </div>
-    <div class="right-home">
-        <div class="row">
-            <div class="column medium-6">
-              <h3 class="h3 lead">Get Started</h3>
-              <form class="registration-form" method="POST" action="{{ url_for('register') }}">
-                {{ form.hidden_tag() }}
-                <div>
-                    <label for="username">Username</label>
-                </div>
-                <div class="input-group">
-                  {{ form.username(class="input-field", placeholder="Enter your username") }}
-                  {% for error in form.username.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                </div>
-                <div class="input-group">
-                  {{ form.password(class="input-field", placeholder="Enter your password") }}
-                  {% for error in form.password.errors %}
-                    <span class="error-message">{{ error }}</span>
-                  {% endfor %}
-                </div>
-                <button type="submit" class="button success">Register</button>
-              </form>
-            </div>
-          </div>
-    </div>
-</div>
+{% if current_user.schedule|length > 0 %}
+        <div class="top-nav-appointments">
+            <h4 class="h4 lead">
+                Your Schedule
+            </h4>
+            <button class="button success">
+                Add an Appointment
+            </button>
+        </div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for session in current_user.schedule %}
+                    <tr>
+                    <td>{{ session.patient.first_name }} {{ session.patient.last_name }}</td>
+                    <td>{{ session.appointment_date }}</td>
+                    <td>{{ session.appointment_type }}</td>
+                    <td>{{ session.notes }}</td>
+                    <td class="actions-cell">
+                        <a href="{{ url_for('edit_appointment', appointment_id=appointment.id) }}"><i class="fi-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <form method="post" action="{{ url_for('delete_appointment', appointment_id=appointment.id) }}"><button type="submit" class="delete-btn"><i class="fi-trash"></i></button></form>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="{{ url_for('view_appointment', appointment_id=appointment.id) }}"><i class="fi-eye"></i></a>
+                    </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{% else %}
+        <div class="empty-state-appointments">
+            <h1>You have no Appointments</h1>
+            <a class="button success" href="/create_appointment">Create your first Appointment</a>
+        </div>
+{% endif %}
 {% endblock %}

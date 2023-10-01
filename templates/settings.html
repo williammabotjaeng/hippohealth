@@ -1,0 +1,102 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <div class="settings-container">
+    <div class="top-nav-settings">
+      <h4>Settings</h4>
+      <a class="button success back-from-settings-btn" href="/home">Back to Home</a>
+    </div>
+    <form method="POST" action="{{ url_for('update_user') }}">
+      {{ form.hidden_tag() }}
+      <div class="settings-form-contents">
+        <div class="left-settings-form">
+          <div class="form-group">
+            {{ form.username.label }} {{ form.username(class="form-control", value=current_user.username) }}
+            {% for error in form.username.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            {{ form.password.label }} {{ form.password(class="form-control") }}
+            {% for error in form.password.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            {{ form.medical_practitioner_type.label }} {{ form.medical_practitioner_type(class="form-control", value=current_user.medical_practitioner_type) }}
+            {% for error in form.medical_practitioner_type.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.medical_authority.label }} {{ form.medical_authority(class="form-control", value=current_user.medical_authority) }}
+            {% for error in form.medical_authority.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="right-settings-form">
+          <div class="form-group">
+            {{ form.membership_status.label }} {{ form.membership_status(class="form-control", value=current_user.membership_status) }}
+            {% for error in form.membership_status.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            {{ form.membership_number.label }} {{ form.membership_number(class="form-control", value=current_user.membership_number) }}
+            {% for error in form.membership_number.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.experience.label }} {{ form.experience(class="form-control", value=current_user.experience) }}
+            {% for error in form.experience.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+           
+        
+          <div class="form-group">
+            {{ form.first_name.label }} {{ form.first_name(class="form-control", value=current_user.first_name) }}
+            {% for error in form.first_name.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="settings-form-end">
+          <div class="form-group">
+            {{ form.last_name.label }} {{ form.last_name(class="form-control", value=current_user.last_name) }}
+            {% for error in form.last_name.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            {{ form.email.label }} {{ form.email(class="form-control", value=current_user.email) }}
+            {% for error in form.email.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          
+          <div class="form-group">
+            {{ form.phone_number.label }} {{ form.phone_number(class="form-control", value=current_user.phone_number) }}
+            {% for error in form.phone_number.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            {{ form.address.label }} {{ form.address(class="form-control", value=current_user.address) }}
+            {% for error in form.address.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+          <div class="form-group">
+            {{ form.submit(class="button success settings-submit-btn") }}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}
