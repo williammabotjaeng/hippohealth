@@ -28,4 +28,18 @@
 
 .main-content {
     padding: 10px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.left-home {
+    float: left;
+    width: 100%;
+    padding: 20px;
+}
+
+.right-home {
+    float: right;
+    width: 100%;
 }
