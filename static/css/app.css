@@ -198,7 +198,7 @@
     margin: 0px 20px;
 }
 
-.empty-state-patients {
+.empty-state-patients, .empty-state-tiers, .empty-state-appointments {
     display: flex;
     flex-direction: column;
     text-align: center;
