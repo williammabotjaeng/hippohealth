@@ -84,6 +84,7 @@ class Patient(db.Model):
 class Prescription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     medication = db.Column(db.String(200), nullable=False)
     dosage = db.Column(db.String(50), nullable=False)
     instructions = db.Column(db.String(200), nullable=True)
@@ -95,13 +96,14 @@ class Prescription(db.Model):
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     appointment_date = db.Column(db.DateTime, nullable=False)
     appointment_type = db.Column(db.String(100), nullable=False)
     
     notes = db.Column(db.String(200), nullable=True)
 
-    user = db.relationship('User', backref=db.backref('appointments', lazy=True))
+    creator = db.relationship('User', backref=db.backref('appointments', lazy=True))
     patient = db.relationship('Patient', backref=db.backref('appointments', lazy=True))
 
 class Tier(db.Model):
@@ -127,6 +129,7 @@ class Reminder(db.Model):
     frequency = db.Column(db.String(100), nullable=False)
     daily_frequency = db.Column(db.String(100), nullable=False)
     assigned_patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     reminder_email = db.Column(db.String(100), nullable=False)
 
     assigned_patient = db.relationship('Patient', backref=db.backref('reminders', lazy=True))
@@ -386,6 +389,25 @@ def create_prescription():
         flash('Prescription saved successfully!', 'success')
         return redirect(url_for('prescriptions'))
     return render_template('create_prescription.html', form=form)
+
+@app.route('/create_tier', methods=['GET', 'POST'])
+@login_required
+def create_tier():
+    form = TierForm()
+    if form.validate_on_submit():
+        tier = Tier(
+            frequency=form.frequency.data,
+            treatment_period=form.treatment_period.data,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data,
+            assigned_patient_id=form.assigned_patient_id.data,
+            medical_practitioner_id=form.medical_practitioner_id.data
+        )
+        db.session.add(tier)
+        db.session.commit()
+        flash('Tier saved successfully!', 'success')
+        return redirect(url_for('tiers'))
+    return render_template('create_tier.html', form=form)
 
 
 @app.route('/edit_patient/<int:patient_id>', methods=['GET', 'POST'])
