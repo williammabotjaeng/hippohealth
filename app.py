@@ -9,6 +9,7 @@ from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
 from datetime import datetime, date
 from sqlalchemy import Time, Date
+from nylas import APIClient
 
 import moment
 import requests
@@ -30,12 +31,19 @@ app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
 app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")  # Replace with your email address
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD") # Replace with your email password
+app.config["NYLAS_CLIENT_ID"] = os.getenv("NYLAS_CLIENT_ID")  # Replace with your email address
+app.config["NYLAS_CLIENT_SECRET"] = os.getenv("NYLAS_CLIENT_SECRET") #
 
 mail = Mail(app)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+nylas = APIClient(
+    app.config["NYLAS_CLIENT_ID"],
+    app.config["NYLAS_CLIENT_SECRET"] 
+)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
