@@ -9,6 +9,7 @@ from wtforms.validators import InputRequired, Length, DataRequired, Email
 from dotenv import load_dotenv
 from datetime import datetime, date
 from sqlalchemy import Time, Date
+from nylas import APIClient
 
 import moment
 import requests
@@ -30,12 +31,28 @@ app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
 app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")  # Replace with your email address
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD") # Replace with your email password
+app.config["NYLAS_CLIENT_ID"] = os.getenv("NYLAS_CLIENT_ID")  # Replace with your email address
+app.config["NYLAS_CLIENT_SECRET"] = os.getenv("NYLAS_CLIENT_SECRET") #
+app.config["NYLAS_ACCESS_TOKEN"] = os.getenv("NYLAS_ACCESS_TOKEN") #
 
 mail = Mail(app)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+nylas = APIClient(
+    app.config["NYLAS_CLIENT_ID"],
+    app.config["NYLAS_CLIENT_SECRET"]
+)
+
+auth_url = nylas.authentication_url(
+    "http://localhost:5000/nylas_callback", # Required
+    login_hint="williammabotjaeng@gmail.com",  # Optional
+    state="SGE5DFsa48",  # Optional
+    scopes='email, calendar, contacts' # Optional - Default is all scopes
+
+)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -254,7 +271,7 @@ def index():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
-    return render_template("index.html", form=form)
+    return render_template("index.html", form=form, auth_url=auth_url)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():

@@ -8,3 +8,5 @@ python-dotenv
 gunicorn
 Flask-Mail
 moment
+nylas
+flask_dance
